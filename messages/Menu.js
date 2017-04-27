@@ -1,7 +1,5 @@
 var DocumentDBClient = require('documentdb').DocumentClient;
 var async = require('async');
-var MenuItem = require('./MenuItem');
-
 
  function Menu(MenuItem) {
    this.menuItem = MenuItem;
