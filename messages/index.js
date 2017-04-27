@@ -28,7 +28,7 @@ function addMenuItem(obj) {
     var menuItem = new MenuItem(docDbClient, "menudb", "menucollection");
     var menu = new Menu(menuItem);
     menuItem.init();
-    
+
     menuItem.addMenuItem(obj);
 }
 
@@ -79,7 +79,8 @@ var menu = [
 	}
     ];
 
-addMenuItem(menu);
+addMenuItem(menu[0]);
+addMenuItem(menu[1]);
 
 var bot = new builder.UniversalBot(connector);
 
