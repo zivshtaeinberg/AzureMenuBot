@@ -17,11 +17,13 @@ MenuItem.prototype = {
 
          docdbUtils.getOrCreateDatabase(self.client, self.databaseId, function (err, db) {
              if (err) {
+                 throw('db was failed');
                  callback(err);
              } else {
                  self.database = db;
                  docdbUtils.getOrCreateCollection(self.client, self.database._self, self.collectionId, function (err, coll) {
                      if (err) {
+                         throw('collection was failed');
                          callback(err);
 
                      } else {
