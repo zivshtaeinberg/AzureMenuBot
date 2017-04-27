@@ -24,11 +24,11 @@ function getMenuItem() {
         masterKey: process.env['documentdbprimarykey']
     });
  
-    var MenuItem = new MenuItem(docDbClient, "menu", "menu");
-    var Menu = new Menu(MenuItem);
-    MenuItem.init();
+    var menuItem = new MenuItem(docDbClient, "menu", "menu");
+    var menu = new Menu(menuItem);
+    menuItem.init();
 
-    return Menu.getMenuItem();
+    return menu.getMenuItem();
 }
 
 var x = getMenuItem();
