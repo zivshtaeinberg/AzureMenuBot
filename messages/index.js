@@ -29,7 +29,7 @@ function addMenuItem(obj) {
     var menu = new Menu(menuItem);
     menuItem.init();
 
-    menuItem.addMenuItem(obj);
+    menuItem.addItem(obj);
 }
 
 function getMenuItem() {
