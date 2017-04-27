@@ -19,19 +19,32 @@ var connector = useEmulator ? new builder.ChatConnector() : new botbuilder_azure
     openIdMetadata: process.env['BotOpenIdMetadata']
 });
 
+function addMenuItem(obj) {
+
+    var docDbClient = new DocumentDBClient(process.env['documentdburi'], {
+        masterKey: process.env['documentdbprimarykey']
+    });
+ 
+    var menuItem = new MenuItem(docDbClient, "menudb", "menucollection");
+    var menu = new Menu(menuItem);
+    menuItem.init();
+    
+    menuItem.addMenuItem(obj);
+}
+
 function getMenuItem() {
     var docDbClient = new DocumentDBClient(process.env['documentdburi'], {
         masterKey: process.env['documentdbprimarykey']
     });
  
-    var menuItem = new MenuItem(docDbClient, "menu", "menu");
+    var menuItem = new MenuItem(docDbClient, "menudb", "menucollection");
     var menu = new Menu(menuItem);
     menuItem.init();
 
     return menu.getMenuItem();
 }
 
-var x = getMenuItem();
+//var x = getMenuItem();
 
 var menu = [
      {
@@ -65,6 +78,8 @@ var menu = [
 		}
 	}
     ];
+
+addMenuItem(menu);
 
 var bot = new builder.UniversalBot(connector);
 
