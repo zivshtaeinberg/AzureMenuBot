@@ -48,6 +48,8 @@ MenuItem.prototype = {
      addItem: function (item, callback) {
          var self = this;
 
+         throw(self.collection);
+
          self.client.createDocument(self.collection._self, item, function (err, doc) {
              if (err) {
                  callback(err);

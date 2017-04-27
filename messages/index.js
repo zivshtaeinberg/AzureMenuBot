@@ -20,9 +20,6 @@ var connector = useEmulator ? new builder.ChatConnector() : new botbuilder_azure
 });
 
 function addMenuItem(obj) {
-
-    throw (process.env['documentdbprimarykey']);
-
     var docDbClient = new DocumentDBClient(process.env['documentdburi'], {
         masterKey: process.env['documentdbprimarykey']
     });
