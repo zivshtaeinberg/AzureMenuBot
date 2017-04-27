@@ -86,7 +86,7 @@ bot.dialog('/', [
         for (var i=0; i < self.mainMenu.length; i++){
             if(new RegExp(self.mainMenu[i].regexp,"g").exec(userRequest)) {
                 session.userData.menuIndex = i;
-                builder.Prompts.choice(session, 'אוקיי, תבחר מהאופציות הבאות:',
+                builder.Prompts.choice(session, 'אוקיי, תבחר מהאופציות הבאות:\n',
                     self.mainMenu[i].menu);
                 return;
             }
