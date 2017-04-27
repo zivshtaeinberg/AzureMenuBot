@@ -6,6 +6,9 @@ https://docs.botframework.com/en-us/node/builder/chat/dialogs/#waterfall
 "use strict";
 var builder = require("botbuilder");
 var botbuilder_azure = require("botbuilder-azure");
+var DocumentDBClient = require('documentdb').DocumentClient;
+var Menu = require('./Menu');
+var MenuItem = require('./MenuItem');
 
 var useEmulator = (process.env.NODE_ENV == 'development');
 
@@ -15,6 +18,20 @@ var connector = useEmulator ? new builder.ChatConnector() : new botbuilder_azure
     stateEndpoint: process.env['BotStateEndpoint'],
     openIdMetadata: process.env['BotOpenIdMetadata']
 });
+
+function getMenuItem() {
+    var docDbClient = new DocumentDBClient(process.env['documentdburi'], {
+        masterKey: process.env['documentdbprimarykey']
+    });
+ 
+    var MenuItem = new MenuItem(docDbClient, "menu", "menu");
+    var Menu = new Menu(MenuItem);
+    MenuItem.init();
+
+    return Menu.getMenuItem();
+}
+
+var x = getMenuItem();
 
 var menu = [
      {
