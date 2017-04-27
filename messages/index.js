@@ -82,23 +82,35 @@ bot.dialog('/', [
     },
     function (session, results) {
         var userRequest = results.response;
-        console.log(userRequest);
-        for (var i=0; i < self.mainMenu.length; i++){
-            if(new RegExp(self.mainMenu[i].regexp,"g").exec(userRequest)) {
-                session.userData.menuIndex = i;
-                builder.Prompts.choice(session, 'אוקיי, תבחר מהאופציות הבאות:\n',
-                    self.mainMenu[i].menu);
-                return;
-            }
+        if (userRequest == 'תמונה') {
+            var msg = new builder.Message(session)
+                .attachments([{
+                    contentType: "image/jpeg",
+                    contentUrl: "http://www.theoldrobots.com/images62/Bender-18.JPG"
+                }]);
+            session.endDialog(msg);
         }
+        else {
+
+            for (var i=0; i < self.mainMenu.length; i++){
+                if(new RegExp(self.mainMenu[i].regexp,"g").exec(userRequest)) {
+                    session.userData.menuIndex = i;
+                    builder.Prompts.choice(session, 'אוקיי, תבחר מהאופציות הבאות:\n',
+                        self.mainMenu[i].menu);
+                    return;
+                }
+            }
         
-        session.endDialog('מצטער אחי, לא תומך בך היום')
+            session.endDialog('מצטער אחי, לא תומך בך היום')
+        }
     },
 
 function (session, results) {
         var userChoice = results.response.entity;
         
         session.send(self.mainMenu[session.userData.menuIndex].menu[userChoice].link);
+
+        
     }
 ]);
 
