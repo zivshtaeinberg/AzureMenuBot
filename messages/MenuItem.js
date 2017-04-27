@@ -31,8 +31,12 @@ MenuItem.prototype = {
                          self.collection = coll;
                      }
                  });
+
+                 throw('collection was finished');
              }
          });
+
+         throw('db was finished');
      },
 
      find: function (querySpec, callback) {
