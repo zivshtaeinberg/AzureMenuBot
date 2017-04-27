@@ -6,7 +6,12 @@ var async = require('async');
  }
 
  Menu.prototype = {
-     getMenuItems: function () {
+     init: function(callback) {
+         var self = this;
+         this.menuItem.init(callback);
+     },
+
+     getMenuItems: function (callback) {
          var self = this;
 
          var querySpec = {
@@ -18,7 +23,7 @@ var async = require('async');
                  throw (err);
              }
 
-             return items;
+             callback(items);
          });
      },
 

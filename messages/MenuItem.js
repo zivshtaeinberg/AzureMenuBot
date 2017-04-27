@@ -23,20 +23,15 @@ MenuItem.prototype = {
                  self.database = db;
                  docdbUtils.getOrCreateCollection(self.client, self.database._self, self.collectionId, function (err, coll) {
                      if (err) {
-                         throw('collection was failed');
                          callback(err);
 
                      } else {
-                         throw('collection was get');
                          self.collection = coll;
+                         callback();
                      }
                  });
-
-                 throw('collection was finished');
              }
          });
-
-         throw('db was finished');
      },
 
      find: function (querySpec, callback) {

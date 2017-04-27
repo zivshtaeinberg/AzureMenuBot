@@ -4,6 +4,8 @@ For a complete walkthrough of creating this type of bot see the article at
 https://docs.botframework.com/en-us/node/builder/chat/dialogs/#waterfall
 -----------------------------------------------------------------------------*/
 "use strict";
+var self = this;
+
 var builder = require("botbuilder");
 var botbuilder_azure = require("botbuilder-azure");
 var DocumentDBClient = require('documentdb').DocumentClient;
@@ -18,34 +20,9 @@ var connector = useEmulator ? new builder.ChatConnector() : new botbuilder_azure
     stateEndpoint: process.env['BotStateEndpoint'],
     openIdMetadata: process.env['BotOpenIdMetadata']
 });
-
-function addMenuItem(obj) {
-    var docDbClient = new DocumentDBClient(process.env['documentdburi'], {
-        masterKey: process.env['documentdbprimarykey']
-    });
- 
-    var menuItem = new MenuItem(docDbClient, "menudb", "menucollection");
-    var menu = new Menu(menuItem);
-    menuItem.init();
-
-    menuItem.addItem(obj);
-}
-
-function getMenuItem() {
-    var docDbClient = new DocumentDBClient(process.env['documentdburi'], {
-        masterKey: process.env['documentdbprimarykey']
-    });
- 
-    var menuItem = new MenuItem(docDbClient, "menudb", "menucollection");
-    var menu = new Menu(menuItem);
-    menuItem.init();
-
-    return menu.getMenuItem();
-}
-
-//var x = getMenuItem();
-
-var menu = [
+var mainMenu = [];
+/*
+var mainMenu = [
      {
 	id: 'id',
 	regexp : /(תעודת זהות)|(תז)/g,
@@ -77,9 +54,25 @@ var menu = [
 		}
 	}
     ];
+*/
 
-addMenuItem(menu[0]);
-addMenuItem(menu[1]);
+var docDbClient = new DocumentDBClient(process.env['documentdburi'], {
+    masterKey: process.env['documentdbprimarykey']
+});
+
+var menuItem = new MenuItem(docDbClient, "menudb", "menucollection");
+var menu = new Menu(menuItem);
+
+menu.init(function(err) {
+     if(err) {
+        throw err;
+     }
+     else {
+        menu.getMenuItems(function(menuItems) {
+            self.mainMenu = menuItems;
+        });
+     }
+});
 
 var bot = new builder.UniversalBot(connector);
 
@@ -90,11 +83,11 @@ bot.dialog('/', [
     function (session, results) {
         var userRequest = results.response;
         console.log(userRequest);
-        for (var i=0; i < menu.length; i++){
-            if(new RegExp(menu[i].regexp).exec(userRequest)) {
+        for (var i=0; i < self.mainMenu.length; i++){
+            if(new RegExp(self.mainMenu[i].regexp,"g").exec(userRequest)) {
                 session.userData.menuIndex = i;
                 builder.Prompts.choice(session, 'אוקיי, תבחר מהאופציות הבאות:',
-                    menu[i].menu);
+                    self.mainMenu[i].menu);
                 return;
             }
         }
@@ -105,7 +98,7 @@ bot.dialog('/', [
 function (session, results) {
         var userChoice = results.response.entity;
         
-        session.send(menu[session.userData.menuIndex].menu[userChoice].link);
+        session.send(self.mainMenu[session.userData.menuIndex].menu[userChoice].link);
     }
 ]);
 

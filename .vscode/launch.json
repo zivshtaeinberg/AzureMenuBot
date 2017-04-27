@@ -1,12 +1,14 @@
-
 {
+    // Use IntelliSense to learn about possible Node.js debug attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch",
             "type": "node",
             "request": "launch",
-            "program": "${workspaceRoot}/index.js",
+            "name": "Launch Program",
+            "program": "${workspaceRoot}/messages/index.js",
             "cwd": "${workspaceRoot}",
             "env": {
                 "NODE_ENV": "development",
@@ -14,12 +16,19 @@
                 "BotEnv": "dev",
                 "BotStateEndpoint":"",
                 "BotOpenIdMetadata": "",
-                "MicrosoftAppId": "c5b066dd-1419-434c-a2ea-28f5e189d5c0",
-                "MicrosoftAppPassword": "ymZjpKP2T9KAozA4fwiPbMk",
+                "MicrosoftAppId": "",// "c5b066dd-1419-434c-a2ea-28f5e189d5c0",
+                "MicrosoftAppPassword": "",// "ymZjpKP2T9KAozA4fwiPbMk",
                 "BotDevAppInsightKey": "7809e108-b858-49a3-98e0-aa0f139f71b1",
                 "documentdburi": "https://botgovdocdb.documents.azure.com:443/",
                 "documentdbprimarykey": "42hwkGwcO69iy3U9WA1hgxbRssxAyZmmMqrTmojaJfgTOqOv3cKG0BT1Pg1xWQDImboLlxs9en8fLdSWCcRzUg=="
             }
+        },
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Attach to Port",
+            "address": "localhost",
+            "port": 5858
         }
     ]
 }
