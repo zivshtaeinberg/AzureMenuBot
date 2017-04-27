@@ -90,6 +90,14 @@ bot.dialog('/', [
                 }]);
             session.endDialog(msg);
         }
+        else if (userRequest == 'סרטון') {
+            var msg = new builder.Message(session)
+                .attachments([{
+                    contentType: "video/mp4",
+                    contentUrl: "http://techslides.com/demos/sample-videos/small.mp4"
+                }]);
+            session.endDialog(msg);
+        }
         else {
 
             for (var i=0; i < self.mainMenu.length; i++){
