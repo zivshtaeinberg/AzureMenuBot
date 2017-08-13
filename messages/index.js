@@ -12,6 +12,7 @@ var DocumentDBClient = require('documentdb').DocumentClient;
 var Menu = require('./Menu');
 var MenuItem = require('./MenuItem');
 var https = require('https');
+var arrResult;
 
 var useEmulator = (process.env.NODE_ENV == 'development');
 
@@ -134,6 +135,21 @@ bot.dialog('/', [
                     body = Buffer.concat(bodyChunks);
                     session.send('body: ' + body.toString());
                     var scenario = JSON.parse(body);
+                    var size = JSON.parse(body).Total;
+                    
+                    arrResult = JSON.parse(body);
+                    var options = [];
+                   
+                    var json_length = arrResult['Results'].length;
+
+                    for (var i = 0; i < json_length; i++) 
+                    {
+                        var msg = arrResult['Results'][i];
+                        options.push(msg.Title);
+                    }
+
+                    builder.Prompts.choice(session, "בחר מהאופציות הבאות", options);
+
                     //action = "runsteps";
                     //session.endDialog({runsteps : true});
                 })
@@ -161,6 +177,15 @@ bot.dialog('/', [
                 session.endDialog('מצטער אחי, לא תומך בך היום')*/
         }
     },
+    function (session, results) 
+    {
+        //var x = results.response.index;
+        var item_selc = arrResult['Results'][results.response.index];
+        var link = item_selc.Url;
+        builder.Prompts.link(link);        
+        //builder.Prompts.link("http://www.googl.eom");
+    },
+
     function (session, results) {
         var userChoice = results.response.entity;
 
