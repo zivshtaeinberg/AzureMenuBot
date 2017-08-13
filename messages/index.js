@@ -64,22 +64,22 @@ var docDbClient = new DocumentDBClient(process.env['documentdburi'], {
 var menuItem = new MenuItem(docDbClient, "menudb", "menucollection");
 var menu = new Menu(menuItem);
 
-menu.init(function(err) {
-     if(err) {
+menu.init(function (err) {
+    if (err) {
         throw err;
-     }
-     else {
-        menu.getMenuItems(function(menuItems) {
+    }
+    else {
+        menu.getMenuItems(function (menuItems) {
             self.mainMenu = menuItems;
         });
-     }
+    }
 });
 
 var bot = new builder.UniversalBot(connector);
 
 bot.dialog('/', [
     function (session) {
-        builder.Prompts.text(session, "אהלן אח שלי, איך אני יכול לעזור לך נשמה?");
+        builder     .Prompts.text(session, "אהלן אח שלי, איך אני יכול לעזור לך נשמה?");
     },
     function (session, results) {
         var userRequest = results.response;
@@ -102,57 +102,81 @@ bot.dialog('/', [
         else {
 
             var sentence = session.message.text;
-
-        var intendUrl = "/v2/botanalyzer/getintend?version=V2";
-
-        var options = 
-        {
-            host: 'https://apimgovil.azure-api.net//Services',//social2apimdevelopmentdevrgaz.azure-api.net',
-            path: intendUrl,
-            port: 443,
-            method: 'POST',
-            headers: 
+            //var texturl = encodeURIComponent("/Services/" + sentence);
+            var texturl = "/Services/" + encodeURIComponent(sentence);
+            
+            var intendUrl = texturl;//'/Services//תעודת זהות';
+            var options = 
             {
-                'Content-Type': 'application/json',
-                'Ocp-Apim-Subscription-Key': '5e935f71fed4452d83e764e87b7bdeaf'//'b45c82cf1a9e489295a922be98fd6b6d'
-            }
-        }
-
-        var body = '';
-
-        var req = https.request(options, function (res) {
-            session.send('STATUS: ' + res.statusCode);
-            session.send('HEADERS: ' + JSON.stringify(res.headers));
-
-            for (var i=0; i < self.mainMenu.length; i++){
-                if(new RegExp(self.mainMenu[i].regexp,"g").exec(userRequest)) {
-                    session.userData.menuIndex = i;
-                    builder.Prompts.choice(session, 'אוקיי, תבחר מהאופציות הבאות:\n',
-                        self.mainMenu[i].menu);
-                    return;
+                host: 'apimgovil.azure-api.net',//social2apimdevelopmentdevrgaz.azure-api.net',
+                path: intendUrl,
+                port: 443,
+                method: 'GET',
+                headers: 
+                {
+                    'Content-Type': 'application/json',
+                    'Ocp-Apim-Subscription-Key': '5e935f71fed4452d83e764e87b7bdeaf'
                 }
             }
-        
-            session.endDialog('מצטער אחי, לא תומך בך היום')
+
+            var body = '';
+            
+            var req = https.request(options, function (res) 
+            {
+                session.send('STATUS: ' + res.statusCode);
+                session.send('HEADERS: ' + JSON.stringify(res.headers));
+    
+                // Buffer the body entirely for processing as a whole.
+                var bodyChunks = [];
+                res.on('data', function (chunk) {
+                    bodyChunks.push(chunk);
+                }).on('end', function () {
+                    body = Buffer.concat(bodyChunks);
+                    session.send('body: ' + body.toString());
+                    var scenario = JSON.parse(body);
+                    //action = "runsteps";
+                    //session.endDialog({runsteps : true});
+                })
+            });
+
+            req.write("{ \"text\":" + sentence + "}");
+            req.end();
+    
+            req.on('error', function (e) {
+                builder.Prompts.text(session, 'ERROR: ' + e.message);
+            });
+            
+                //session.send('STATUS: ' + res.statusCode);
+                //session.send('HEADERS: ' + JSON.stringify(res.headers));
+/*
+                for (var i = 0; i < self.mainMenu.length; i++) {
+                    if (new RegExp(self.mainMenu[i].regexp, "g").exec(userRequest)) {
+                        session.userData.menuIndex = i;
+                        builder.Prompts.choice(session, 'אוקיי, תבחר מהאופציות הבאות:\n',
+                            self.mainMenu[i].menu);
+                        return;
+                    }
+                }
+
+                session.endDialog('מצטער אחי, לא תומך בך היום')*/
         }
     },
-
-function (session, results) {
+    function (session, results) {
         var userChoice = results.response.entity;
-        
+
         session.send(self.mainMenu[session.userData.menuIndex].menu[userChoice].link);
 
-        
+
     }
 ]);
 
 if (useEmulator) {
     var restify = require('restify');
     var server = restify.createServer();
-    server.listen(3978, function() {
+    server.listen(3978, function () {
         console.log('test bot endpont at http://localhost:3978/api/messages');
     });
-    server.post('/api/messages', connector.listen());    
+    server.post('/api/messages', connector.listen());
 } else {
     module.exports = { default: connector.listen() }
 }
