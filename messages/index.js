@@ -13,6 +13,7 @@ var Menu = require('./Menu');
 var MenuItem = require('./MenuItem');
 var https = require('https');
 var arrResult;
+var GOVILWebsiteLink;
 
 var useEmulator = (process.env.NODE_ENV == 'development');
 
@@ -181,8 +182,8 @@ bot.dialog('/', [
     {
         //var x = results.response.index;
         var item_selc = arrResult['Results'][results.response.index];
-        var link = item_selc.Url;
-        builder.Prompts.link(link);        
+        GOVILWebsiteLink = item_selc.Url;
+        builder.Prompts.text(session, GOVILWebsiteLink);        
         //builder.Prompts.link("http://www.googl.eom");
     },
 
