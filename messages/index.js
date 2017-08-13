@@ -11,6 +11,7 @@ var botbuilder_azure = require("botbuilder-azure");
 var DocumentDBClient = require('documentdb').DocumentClient;
 var Menu = require('./Menu');
 var MenuItem = require('./MenuItem');
+var https = require('https');
 
 var useEmulator = (process.env.NODE_ENV == 'development');
 
@@ -99,6 +100,29 @@ bot.dialog('/', [
             session.endDialog(msg);
         }
         else {
+
+            var sentence = session.message.text;
+
+        var intendUrl = "/v2/botanalyzer/getintend?version=V2";
+
+        var options = 
+        {
+            host: 'https://apimgovil.azure-api.net//Services',//social2apimdevelopmentdevrgaz.azure-api.net',
+            path: intendUrl,
+            port: 443,
+            method: 'POST',
+            headers: 
+            {
+                'Content-Type': 'application/json',
+                'Ocp-Apim-Subscription-Key': '5e935f71fed4452d83e764e87b7bdeaf'//'b45c82cf1a9e489295a922be98fd6b6d'
+            }
+        }
+
+        var body = '';
+
+        var req = https.request(options, function (res) {
+            session.send('STATUS: ' + res.statusCode);
+            session.send('HEADERS: ' + JSON.stringify(res.headers));
 
             for (var i=0; i < self.mainMenu.length; i++){
                 if(new RegExp(self.mainMenu[i].regexp,"g").exec(userRequest)) {
