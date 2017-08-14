@@ -24,40 +24,7 @@ var connector = useEmulator ? new builder.ChatConnector() : new botbuilder_azure
     openIdMetadata: process.env['BotOpenIdMetadata']
 });
 var mainMenu = [];
-/*
-var mainMenu = [
-     {
-	id: 'id',
-	regexp : /(תעודת זהות)|(תז)/g,
-	menu: {
-		    'בקשה לתעודת זהות' : {
-		    	link: 'https://www.gov.il/he/service/new_id'
-		    },
-		    'ספח חדש לתעודת זהות': {
-		    	link: 'https://www.gov.il/he/service/renew_id_appendix'
-		    },
-		    'ספח לתעודת זהות בעקבות שינויים בפרטים האישיים': {
-		    	link: 'https://www.gov.il/he/service/id_stub_following_personal_change'
-		    },
-		    'תעודת זהות חכמה' :{
-		    	link: 'https://www.gov.il/he/service/biometric_smart_id_request'
-		    }
-		}
-	},
-     {
-	id: 'passport',
-	regexp : /(passport)|(דרכון)/g,
-	menu: {
-		    'a' : {
-		    	link: 'https://www.gov.il/he/service/new_id'
-		    },
-		    'b': {
-		    	link: 'https://www.gov.il/he/service/renew_id_appendix'
-		    }    
-		}
-	}
-    ];
-*/
+
 
 var docDbClient = new DocumentDBClient(process.env['documentdburi'], {
     masterKey: process.env['documentdbprimarykey']
@@ -107,10 +74,10 @@ bot.dialog('/', [
             //var texturl = encodeURIComponent("/Services/" + sentence);
             var texturl = "/Services/" + encodeURIComponent(sentence);
             
-            var intendUrl = texturl;//'/Services//תעודת זהות';
+            var intendUrl = texturl;
             var options = 
             {
-                host: 'apimgovil.azure-api.net',//social2apimdevelopmentdevrgaz.azure-api.net',
+                host: 'apimgovil.azure-api.net',
                 path: intendUrl,
                 port: 443,
                 method: 'GET',
@@ -179,12 +146,10 @@ bot.dialog('/', [
         }
     },
     function (session, results) 
-    {
-        //var x = results.response.index;
+    {        
         var item_selc = arrResult['Results'][results.response.index];
         GOVILWebsiteLink = item_selc.Url;
         builder.Prompts.text(session, GOVILWebsiteLink);        
-        //builder.Prompts.link("http://www.googl.eom");
     },
 
     function (session, results) {
